@@ -1,0 +1,9 @@
+#Root-level ignore
+.env
+
+#Backend
+/server/node_modules
+/server/.env
+
+#Frontend
+/client/node_modules
