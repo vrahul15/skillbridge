@@ -21,7 +21,7 @@ const ChatWrapper =() => {
 export default function App(){
   return  (
     <Routes>
-      <Roue path="/room/:roomId" element={<collabRoom />} />
+      <Route path="/room/:roomId" element={<CollabRoom />} />
       <Route path="/code-room" element={<CodeRoom />}/>
       <Route path="/video-call" element={<VideoCall />} />
       <Route path="/login" element= {<Login/>}/>

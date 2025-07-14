@@ -1,7 +1,6 @@
-
 import express from 'express';
 import http from 'http';
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -13,47 +12,59 @@ import connectDB from './config/db.js';
 dotenv.config();
 const app = express();
 
-// Check for required environment variables
+// Log current environment values
+console.log("MONGO_URI =", process.env.MONGO_URI);
+console.log("JWT_SECRET =", process.env.JWT_SECRET);
+
+// Check required environment variables
 if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
   console.error('❌ Missing required environment variables!');
-  console.log('MONGO_URI:', process.env.MONGO_URI);
-  console.log('JWT_SECRET:', process.env.JWT_SECRET);
-  process.exit(1); // Exit the app
+  process.exit(1);
 }
 
-//middlewares
-app.use(cors());
+// Middleware
+app.use(cors({
+  origin: 'https://skillbridge.vercel.app', // frontend URL
+  credentials: true
+}));
 app.use(express.json());
 
-//routes
-app.use('/api/auth',authroutes);
+// Routes
+app.use('/api/auth', authroutes);
 
-const server=http.createServer(app);
-const io= new Server(server,{
-    cors:{
-        origin: '*',
-        methods: ['GET','POST']
-    }
+// Create HTTP Server
+const server = http.createServer(app);
+
+// Setup Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
 });
 
-//socket connection
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
-    socketHandler(io, socket);
+  console.log('🟢 User connected:', socket.id);
+  socketHandler(io, socket);
 });
 
-/// Start Server with DB Connection
+// DB Connection + Server Startup
 const PORT = process.env.PORT || 5000;
+
 connectDB()
   .then(() => {
     server.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
   })
   .catch((err) => {
-    console.error('❌ DB connection failed:', err);
+    console.error("❌ MongoDB connection failed:", err);
     process.exit(1);
   });
 
-app.use(cors({
-    origin: 'https://skillbridge.vercel.app', // frontend URL
-    credentials: true
-}))
+// Global Error Catchers
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("❌ Unhandled Promise Rejection:", reason);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("❌ Uncaught Exception:", err);
+});
