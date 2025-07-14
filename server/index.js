@@ -13,6 +13,14 @@ import connectDB from './config/db.js';
 dotenv.config();
 const app = express();
 
+// Check for required environment variables
+if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
+  console.error('❌ Missing required environment variables!');
+  console.log('MONGO_URI:', process.env.MONGO_URI);
+  console.log('JWT_SECRET:', process.env.JWT_SECRET);
+  process.exit(1); // Exit the app
+}
+
 //middlewares
 app.use(cors());
 app.use(express.json());
@@ -34,11 +42,16 @@ io.on('connection', (socket) => {
     socketHandler(io, socket);
 });
 
-//connect DB & start server
+/// Start Server with DB Connection
 const PORT = process.env.PORT || 5000;
-connectDB().then(() => {
-    server.listen(PORT, () => console.log(`server running on port ${PORT}`));
-});
+connectDB()
+  .then(() => {
+    server.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+  })
+  .catch((err) => {
+    console.error('❌ DB connection failed:', err);
+    process.exit(1);
+  });
 
 app.use(cors({
     origin: 'https://skillbridge.vercel.app', // frontend URL
