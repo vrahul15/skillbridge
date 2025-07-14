@@ -3,6 +3,8 @@ import { register, login } from '../controllers/authController.js';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
+const router = express.Router();
+
 router.get('/me', async (req,res) => {
     try {
         const token = req.headers.authorization?.split(" ")[1];
@@ -14,7 +16,7 @@ router.get('/me', async (req,res) => {
     }
 });
 
-const router = express.Router();
+
 
 router.post('/register', register);
 router.post('/login', login);
