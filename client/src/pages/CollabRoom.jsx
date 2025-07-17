@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import socket from "../sockets/SocketClient";
 import peer from "../peers/PeerClient";
 import { useParams } from "react-router-dom";
-import { MonacoEditor } from "@monaco-editor/react";
+import Editor from "@monaco-editor/react";
 
 const CollabRoom = () => {
   const { roomId } = useParams();
@@ -96,7 +96,7 @@ const CollabRoom = () => {
 
       {/* Right Column: Code Editor */}
       <div>
-        <MonacoEditor
+        <Editor
           height="100%"
           defaultLanguage="javascript"
           theme="vs-dark"

@@ -8,9 +8,11 @@ import socketHandler from './sockets/socketHandler.js';
 
 import authroutes from './routes/authRoutes.js';
 import connectDB from './config/db.js';
+import sessionRoutes from './routes/sessionRoutes.js';
 
 dotenv.config();
 const app = express();
+app.use('/api/sessions', sessionRoutes);
 
 // Log current environment values
 console.log("MONGO_URI =", process.env.MONGO_URI);
